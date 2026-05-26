@@ -15,6 +15,21 @@ app.post("/signup",(req,res)=>{
     res.json({message : "You have signed up!"});
 })
 
+app.post("/signin",(req,res)=>{
+    let username = req.body.username;
+    let password = req.body.password;
+    let user = users.find(user=>{
+        return user.username===username && user.password===password
+    })
+    if(user){
+        const token = jwt.sign({username:username,password:password},JWT_SECRET);
+        res.send({message : "You have signed in!",token:token});
+    }
+    else{
+        res.status(403).json({message : "Invalid credentials!"});
+    }
+})
+
 app.listen(3000,()=>{
     console.log("Server is running on port 3000");
 })
