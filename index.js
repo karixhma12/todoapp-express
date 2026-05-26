@@ -8,6 +8,24 @@ app.use(express.json());
 
 let users = [];
 
+function authMiddleware(req,res,next){
+    let token = req.headers.authorization;
+    if(!token){
+        return res.status(401).json({message : "No token found - unauthorized!"});
+    }
+    else{
+        jwt.verify(token,JWT_SECRET,(err,decoded)=>{
+            if(err){
+                return res.status(403).json({message : "Invalid token - forbidden!"});
+            }
+            else{
+                req.user = decoded;
+                next();
+            }
+        })
+    }
+}
+
 app.post("/signup",(req,res)=>{
     let username = req.body.username;
     let password = req.body.password;
