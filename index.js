@@ -90,6 +90,21 @@ app.delete("/deletetodo",authMiddleware,(req,res)=>{
     res.json({message : `Todo successfully deleted : ${title}`});
 })
 
+
+app.put("/updatetodo",authMiddleware,(req,res)=>{
+    const username = req.user.username;
+    const title = req.body.title;
+    const user = users.find((user)=>{
+        return user.username === username;
+    })
+    user.todos.forEach(todo=>{
+        if(todo.title===title){
+            todo.done = true;
+        }
+    })
+    res.json({message : `Todo marked as done : ${title}`});
+})
+
 app.listen(3000,()=>{
     console.log("Server is running on port 3000");
 })
