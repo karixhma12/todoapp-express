@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App - express </title>
+    <script src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="signupin-div">
+
+        <div>
+            Signup 
+            <input type="text" placeholder="Username" id="signup-username">
+            <input type="text" placeholder="Password" id="signup-password">
+            <button onclick="signup()"> Submit </button>
+        </div>
+
+        <div>
+            Signin 
+            <input type="text" placeholder="Username" id="signin-username">
+            <input type="text" placeholder="Password" id="signin-password">
+            <button onclick="signin()"> Submit </button>          
+        </div>
+
+    </div>
+
+    <div id="todos-div">
+        <input type="text" placeholder="Type your todo..." id="todotbadded">
+        <button onclick="addtodo()"> Add Todo </button>
+        <ul id="todo-list">
+
+        </ul>
+        <button onclick="logout()"> Logout </button>
+    </div>
+    <script>
+        async function signup(){
+            const username = document.getElementById("signup-username").value;
+            const password = document.getElementById("signup-password").value;
+            await axios.post("/signup",{username,password});
+            alert("Signed up successfully!");
+        }
+
+        async function signin(){
+            const username = document.getElementById("signin-username").value;
+            const password = document.getElementById("signin-password").value;
+            const response = await axios.post("/signin",{username,password});
+            localStorage.setItem("token",response.data.token);
+            updateUI();
+
+        }
+
+        async function addtodo(){
+            const token = localStorage.getItem("token");
+            const title = document.getElementById("todotbadded").value;
+            await axios.post("/addtodo", {title}, { headers : 
+                {authorization : token}
+            })
+
+        }
+
+        function logout(){
+            localStorage.removeItem("token");
+            alert("Successfully logged out!");
+            updateUI();
+        }
+
+        function updateUI(){
+            const token = localStorage.getItem("token");
+            if(!token){
+                document.getElementById("signupin-div").style.display = "block";
+                document.getElementById("todos-div").style.display = "none";
+            }
+            else{
+                document.getElementById("signupin-div").style.display = "none";
+                document.getElementById("todos-div").style.display = "block";
+            }
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
