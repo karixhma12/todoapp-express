@@ -29,6 +29,15 @@ function authMiddleware(req,res,next){
 app.post("/signup",(req,res)=>{
     let username = req.body.username;
     let password = req.body.password;
+
+    const existingUser = users.find(user=>{
+        return user.username === username
+    })
+
+    if(existingUser){
+        return res.json({message : "Username already taken!"});
+    }
+
     users.push({username,password, todos:[]});
     res.json({message : "You have signed up!"});
 })
@@ -57,6 +66,15 @@ app.post("/addtodo",authMiddleware,(req,res)=>{
         }     
     })
     res.status(200).json({message : `Successfully added todo : ${title}`})
+})
+
+app.get("/gettodos",authMiddleware,(req,res)=>{
+    const username = req.user.username;
+    const user = users.find((user)=>{
+        return user.username === username
+    })
+    res.status(200).json({LisOfTodos : user.todos});
+
 })
 
 app.listen(3000,()=>{
