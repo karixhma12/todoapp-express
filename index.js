@@ -77,6 +77,19 @@ app.get("/gettodos",authMiddleware,(req,res)=>{
 
 })
 
+app.delete("/deletetodo",authMiddleware,(req,res)=>{
+    const title = req.body.title;
+    const username = req.user.username;
+    const user = users.find(user=>{
+        return user.username === username
+    })
+    const newTodos = user.todos.filter((todo)=>{
+        return todo.title != title
+    })
+    user.todos = newTodos;
+    res.json({message : `Todo successfully deleted : ${title}`});
+})
+
 app.listen(3000,()=>{
     console.log("Server is running on port 3000");
 })
