@@ -48,6 +48,17 @@ app.post("/signin",(req,res)=>{
     }
 })
 
+app.post("/addtodo",authMiddleware,(req,res)=>{
+    const username = req.user.username;
+    const title = req.body.title;
+    users.forEach((user)=>{
+        if(user.username===username){
+            user.todos.push({title: title, done: false});
+        }     
+    })
+    res.status(200).json({message : `Successfully added todo : ${title}`})
+})
+
 app.listen(3000,()=>{
     console.log("Server is running on port 3000");
 })
