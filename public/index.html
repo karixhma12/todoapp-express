@@ -49,10 +49,33 @@
             todoList.innerHTML = "";
             todos.forEach((todo)=>{
                 const li = document.createElement("li");
-                li.innerHTML = todo.title;
+                li.innerText = todo.title;
                 todoList.appendChild(li);
+                const deleteEl = document.createElement("button");
+                deleteEl.onclick = ()=>{deleteTodo(todo.title)};
+                deleteEl.innerHTML = "Delete";
+                const markAsDoneEl = document.createElement("button");
+                markAsDoneEl.innerHTML = "Mark As Done";
+                markAsDoneEl.onclick = ()=>{markAsDoneTodo(todo.title)};
+                li.appendChild(deleteEl);
+                li.appendChild(markAsDoneEl);
+
             })
             
+        }
+
+        async function markAsDoneTodo(title){
+            const token = localStorage.getItem("token");
+            axios.put("/updatetodo",{title},{headers : {authorization : token}});
+            alert("Marked as done sucessfully!");
+            getTodos();
+        }
+
+        async function deleteTodo(title){
+            const token = localStorage.getItem("token");
+            axios.delete("/deletetodo",{data : {title}, headers : {authorization : token}});
+            alert("Todo successfully deleted");
+            getTodos();
         }
 
         async function signin(){
