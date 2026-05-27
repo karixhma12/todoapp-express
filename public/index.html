@@ -41,13 +41,27 @@
             alert("Signed up successfully!");
         }
 
+        async function getTodos(){
+            const token = localStorage.getItem("token");
+            const response = await axios.get("/gettodos",{headers : {authorization : token}});
+            const todos = response.data.LisOfTodos;
+            const todoList = document.getElementById("todo-list");
+            todoList.innerHTML = "";
+            todos.forEach((todo)=>{
+                const li = document.createElement("li");
+                li.innerHTML = todo.title;
+                todoList.appendChild(li);
+            })
+            
+        }
+
         async function signin(){
             const username = document.getElementById("signin-username").value;
             const password = document.getElementById("signin-password").value;
             const response = await axios.post("/signin",{username,password});
             localStorage.setItem("token",response.data.token);
             updateUI();
-
+            getTodos();
         }
 
         async function addtodo(){
@@ -56,6 +70,7 @@
             await axios.post("/addtodo", {title}, { headers : 
                 {authorization : token}
             })
+            getTodos();
 
         }
 
@@ -74,6 +89,7 @@
             else{
                 document.getElementById("signupin-div").style.display = "none";
                 document.getElementById("todos-div").style.display = "block";
+                getTodos();
             }
         }
 
